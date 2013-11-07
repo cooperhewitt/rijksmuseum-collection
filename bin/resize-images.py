@@ -97,10 +97,14 @@ def make_square(src, dest):
 
     logging.info("make %s" % dest)
 
-    tmp = Image.open(src)
+    try:
+        tmp = Image.open(src)
 
-    shannon_region = shannon.sliced_shannon(tmp)
-    logging.info(shannon_region)
+        shannon_region = shannon.sliced_shannon(tmp)
+        logging.debug(shannon_region)
+    except Exception, e:
+        logging.error("failed to determine shannon region: %s" % e)
+        return False
 
     if shannon_region['x'] > 100:
         x = shannon_region['x'] - 100
