@@ -6,6 +6,8 @@ import os.path
 import urllib2
 import logging
 import time
+
+import shannon
 import atk
 import Image
 
@@ -95,11 +97,32 @@ def make_square(src, dest):
 
     logging.info("make %s" % dest)
 
+    tmp = Image.open(src)
+
+    shannon_region = shannon.sliced_shannon(tmp)
+    logging.info(shannon_region)
+
+    if shannon_region['x'] > 100:
+        x = shannon_region['x'] - 100
+    else:
+        x = shannon_region['x']
+                
+    if shannon_region['y'] > 100:
+        y = shannon_region['y'] - 100
+    else:
+        y = shannon_region['y']
+		
+    mx = x + 300
+    my = y + 300
+	
+    try:
+        square = tmp.crop((x, y, mx, my))
+        square.save(dest)
+        
+    except Exception, e:
+        logging.error("failed to generate square crop for %s because %s" % (src, e))
+
     return os.path.exists(dest)
-
-def get_shannon(p):
-    pass
-
 
 if __name__ == '__main__':
 
