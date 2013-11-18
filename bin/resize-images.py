@@ -154,7 +154,7 @@ if __name__ == '__main__':
         if p.endswith("_n.jpg"):
             continue
 
-        if p.endswith("_sq.gif"):
+        if p.endswith("_sq.jpg"):
             continue
 
         if p.endswith("_d.gif"):
