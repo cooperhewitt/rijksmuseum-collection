@@ -59,6 +59,8 @@ def resize(p):
 
 def make_small(src, dest):
 
+    return True
+
     if os.path.exists(dest):
         return True
 
@@ -66,12 +68,14 @@ def make_small(src, dest):
 
     cmd = "gm convert -quality 100 -resize 320 %s %s" % (src, dest)
     # logging.debug(cmd)
-
-    os.system(cmd)
     
+    os.system(cmd)
+
     return os.path.exists(dest)
 
 def make_dithered(src, dest):
+
+    return True
 
     if os.path.exists(dest):
         return True
@@ -92,10 +96,25 @@ def make_dithered(src, dest):
 
 def make_square(src, dest):
 
+#    if os.path.exists(dest):
+#        return True
+
     if os.path.exists(dest):
-        return True
+
+        try:
+            tmp = Image.open(dest)
+            sz = tmp.size
+
+            if sz[0] == 300 and sz[1] == 300:
+                logging.debug("%s is square, skipping" % dest)
+                return True
+
+        except Exception, e:
+            logging.error("failed to open %s, because %s" % (dest, e))
+            return False
 
     logging.info("make %s" % dest)
+    return True
 
     try:
         tmp = Image.open(src)
@@ -105,6 +124,8 @@ def make_square(src, dest):
     except Exception, e:
         logging.error("failed to determine shannon region: %s" % e)
         return False
+
+    return True
 
     if shannon_region['x'] > 100:
         x = shannon_region['x'] - 100
