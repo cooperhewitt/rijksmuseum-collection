@@ -51,7 +51,6 @@ def transfer(bucket, path, force=False):
                 pass
 
         logging.info("copy %s to %s" % (path, aws_url))
-        return True
 
         try:
             k = Key(bucket)
@@ -64,16 +63,16 @@ def transfer(bucket, path, force=False):
             # cache = "max-age=31556926,public" % max_age
             # headers = { 'Cache-Control': cache }
             # k.set_contents_from_filename(path, headers)
-        
-            mtime = os.path.getmtime(path)
-            k.set_metadata('x-mtime', mtime)
+            # mtime = os.path.getmtime(path)
+            # k.set_metadata('x-mtime', mtime)
 
             k.set_acl('public-read')
 
         except Exception, e:
             logging.error("failed to archive %s: %s" % (path, e))
+            return False
 
-
+        return True
 
 if __name__ == '__main__':
 
