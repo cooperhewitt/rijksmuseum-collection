@@ -7,6 +7,8 @@ import urllib2
 import logging
 import time
 
+import subprocess
+
 import shannon
 import atk
 import Image
@@ -28,7 +30,7 @@ def crawl(p):
 
 def resize(p):
 
-    logging.info("resize %s" % p)
+    # logging.info("resize %s" % p)
 
     root = os.path.dirname(p)
     fname = os.path.basename(p)
@@ -64,11 +66,20 @@ def make_small(src, dest):
 
     logging.info("make %s" % dest)
 
-    cmd = "gm convert -quality 100 -resize 320 %s %s" % (src, dest)
-    # logging.debug(cmd)
+    cmd = [
+        "gm",
+        "convert",
+        "-quality",
+        "100",
+        "-resize",
+        "320",
+        src,
+        dest
+        ]
 
-    os.system(cmd)
-    
+    ok = subprocess.call(cmd)
+    logging.debug("%s: %s" % (" ".join(cmd), ok))
+
     return os.path.exists(dest)
 
 def make_dithered(src, dest):
@@ -95,6 +106,28 @@ def make_square(src, dest):
     if os.path.exists(dest):
         return True
 
+    """
+    if os.path.exists(dest):
+
+        try:
+            tmp = Image.open(dest)
+            sz = tmp.size
+
+            if sz[0] == 300 and sz[1] == 300:
+                logging.debug("%s is square, skipping" % dest)
+                return True
+
+            if sz[0] == 320 and sz[1] == 320:
+                logging.debug("%s is square, skipping" % dest)
+                return True
+
+            logging.info("check it out, %s is %s..." % (dest, sz))
+
+        except Exception, e:
+            logging.error("failed to open %s, because %s" % (dest, e))
+            return False
+    """
+
     logging.info("make %s" % dest)
 
     try:
@@ -105,6 +138,8 @@ def make_square(src, dest):
     except Exception, e:
         logging.error("failed to determine shannon region: %s" % e)
         return False
+
+    return True
 
     if shannon_region['x'] > 100:
         x = shannon_region['x'] - 100
@@ -160,6 +195,9 @@ if __name__ == '__main__':
         if p.endswith("_d.gif"):
             continue
 
-        resize(p)
+        ok = resize(p)
 
+        if not ok:
+            logging.warning("failed to resize %s" % p)
+            
     logging.info("done")
