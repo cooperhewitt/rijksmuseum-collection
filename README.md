@@ -11,6 +11,6 @@ welcome your suggestions and fixes.
 
 See also:
 
-* [Rijkscolors]() – the blog post
+* [Rijkscolors](http://labs.cooperhewitt.org/2013/rijkscolors/) – the blog post
 
 * [Rijkscolors](http://collection.cooperhewitt.org/experimental/#rijkscolors) – the experimental feature
